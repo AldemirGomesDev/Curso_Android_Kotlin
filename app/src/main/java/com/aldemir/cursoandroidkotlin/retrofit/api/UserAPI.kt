@@ -4,10 +4,14 @@ import com.aldemir.cursoandroidkotlin.retrofit.model.UserRequest
 import com.aldemir.cursoandroidkotlin.retrofit.model.UserResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface UserAPI {
-    @POST("users/login")
+    @POST("auth/login")
     fun onLogin(@Body userRequest: UserRequest): Call<UserResponse>
+
+    @GET("products/categories")
+    fun getCategory(): Call<List<String>>
 
 }

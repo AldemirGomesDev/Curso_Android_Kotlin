@@ -7,8 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object NetworkConfig {
-    lateinit var context: Context
-    private const val BASE_URL = "http://192.168.0.105:3333/"
+    private const val BASE_URL = "https://fakestoreapi.com/"
 
     fun <T> provideApi(clazz: Class<T>, context: Context?): T {
 
@@ -24,8 +23,8 @@ object NetworkConfig {
 
     private fun okhttpClient(context: Context?): OkHttpClient {
         return OkHttpClient.Builder()
-            .readTimeout(40, TimeUnit.SECONDS)
-            .connectTimeout(40, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
             .addInterceptor(AuthInterceptor(context))
             .build()
     }
