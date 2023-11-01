@@ -7,16 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.aldemir.cursoandroidkotlin.NavigationHost
 import com.aldemir.cursoandroidkotlin.R
 import com.aldemir.cursoandroidkotlin.retrofit.api.UserAPI
 import com.aldemir.cursoandroidkotlin.retrofit.config.NetworkConfig
-import com.aldemir.cursoandroidkotlin.retrofit.model.UserRequest
-import com.aldemir.cursoandroidkotlin.retrofit.model.UserResponse
 import kotlinx.android.synthetic.main.fragment_home.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
 
@@ -36,23 +34,21 @@ class HomeFragment : Fragment() {
     }
 
     private fun getCategory() {
-        NetworkConfig.provideApi(UserAPI::class.java, context)
-            .getCategory().enqueue(object :
-                Callback<List<String>> {
-                override fun onResponse(
-                    call: Call<List<String>>,
-                    response: Response<List<String>>
-                ) {
-                    if (response.code() == 200){
-                        Log.d("TAG_login_test", "success: ${response.body()}")
-                    } else {
-                        Log.e("TAG_login_test", "error: ${response.code()}")
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = NetworkConfig.provideApi(UserAPI::class.java, context)
+                .getCategory()
+            if (response.isSuccessful) {
+                if (response.code() == 200){
+                    Log.d("TAG_login_test", "success: ${response.body()}")
+                    withContext(Dispatchers.Main) {
+                        description.text = response.body().toString()
                     }
+                } else {
+                    Log.e("TAG_login_test", "error: ${response.code()}")
                 }
-
-                override fun onFailure(call: Call<List<String>>, t: Throwable) {
-                    Log.e("TAG_login_test", "onFailure: Error ao fazer login")
-                }
-            })
+            } else {
+                Log.e("TAG_login_test", "onFailure: Error ao fazer login")
+            }
+        }
     }
 }
